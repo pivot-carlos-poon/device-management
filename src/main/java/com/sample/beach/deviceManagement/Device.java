@@ -52,7 +52,24 @@ public class Device {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return this.id.equals(((Device)obj).id);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Device device = (Device) o;
+
+        if (id != null ? !id.equals(device.id) : device.id != null) return false;
+        if (name != null ? !name.equals(device.name) : device.name != null) return false;
+        if (email != null ? !email.equals(device.email) : device.email != null) return false;
+        return type != null ? type.equals(device.type) : device.type == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
 }

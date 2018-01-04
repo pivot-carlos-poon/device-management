@@ -20,8 +20,7 @@ public class DeviceController {
         this.deviceRepository = deviceRepository;
     }
 
-    @GetMapping
-    @RequestMapping(method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<Device>> fetchDevices() {
         return ResponseEntity.ok(deviceRepository.getDevices());
     }
@@ -37,20 +36,28 @@ public class DeviceController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Device> updateDevice(@PathVariable("id") String id) {
-        // String deviceName, String email, String type
-        /*
-        if(oparamers ! exist){
-        retunr
-        return BadRequest response
-        else
-        ...
+    @PutMapping(path="/update/{id}", consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
+    public ResponseEntity<Device> updateDevice(@PathVariable("id") Integer id, @RequestBody(required = false) DeviceRequestBody requestBody) {
 
-         */
+        Device device = deviceRepository.updateDevice(id, requestBody.getName(), requestBody.getEmail(), requestBody.getType());
+        if (device != null) {
+            return ResponseEntity.ok(device);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
 
-//        System.out.println("deviceName="+ deviceName + "-- email=" + email + " -- type="+ type);
+    }
 
-        return null;
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<Integer> removeDevice(@PathVariable("id") Integer id) {
+
+        boolean deviceRemoved = deviceRepository.removeDevice(id);
+
+        if (deviceRemoved) {
+            return ResponseEntity.ok(id);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
     }
 }
