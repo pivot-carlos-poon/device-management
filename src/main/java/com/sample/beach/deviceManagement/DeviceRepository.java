@@ -1,13 +1,24 @@
 package com.sample.beach.deviceManagement;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Component
+@Repository
 public class DeviceRepository {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    DataSource dataSource;
 
     private Integer idCounter = 0;
     private HashMap<Integer, Device> devices;
@@ -17,7 +28,7 @@ public class DeviceRepository {
     }
 
     public List<Device> getDevices() {
-        return new ArrayList<>(devices.values());
+        return jdbcTemplate.query("select * from devices", new BeanPropertyRowMapper(Device.class));
     }
 
     public Device getDeviceForId(int id) {
@@ -25,9 +36,11 @@ public class DeviceRepository {
     }
 
     public Device addDevice(String deviceName, String email, String type) {
-        Device device = new Device(idCounter++, deviceName, email, type);
-        devices.put(device.id, device);
-        return device;
+        Integer result = jdbcTemplate.update("insert into devices (name, email, type) values (?, ?, ?)", new Object[] {deviceName, email, type});
+        if (result > 0) {
+            return new Device(idCounter++, deviceName, email, type);
+        }
+        return null;
     }
 
     public Device updateDevice(Integer id, String deviceName, String email, String type) {
@@ -44,6 +57,6 @@ public class DeviceRepository {
     }
 
     public boolean removeDevice(Integer id) {
-        return false;
+        return jdbcTemplate.update("DELETE from devices where id=?", new Object[] {id}) > 0;
     }
 }

@@ -43,6 +43,9 @@ public class Device {
         this.type = type;
     }
 
+    public Device() {
+    }
+
     public Integer getId() {
         return id;
     }
