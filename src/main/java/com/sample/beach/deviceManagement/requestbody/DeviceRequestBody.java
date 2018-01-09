@@ -1,4 +1,4 @@
-package com.sample.beach.deviceManagement;
+package com.sample.beach.deviceManagement.requestbody;
 
 public class DeviceRequestBody {
     private String name;

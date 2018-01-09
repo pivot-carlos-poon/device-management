@@ -1,5 +1,7 @@
-package com.sample.beach.deviceManagement;
+package com.sample.beach.deviceManagement.configuration;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSourceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,12 +17,15 @@ public class DeviceConfiguration {
     @Bean(name = "deviceDataSource")
     @Profile("default")
     public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.H2)
-                .ignoreFailedDrops(true)
-                .addScripts("schema-default.sql", "data-default.sql")
-                .build();
+        MysqlDataSource dataSource = new MysqlDataSource();
+
+        // Set dataSource Properties
+        dataSource.setServerName("localhost");
+        dataSource.setPortNumber(3306);
+        dataSource.setDatabaseName("deviceManagement");
+        dataSource.setUser("testUser");
+        dataSource.setPassword("password");
+        return dataSource;
     }
 
     @Bean(name = "deviceDataSource")
@@ -30,7 +35,6 @@ public class DeviceConfiguration {
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.H2)
                 .ignoreFailedDrops(true)
-                .addScripts("schema-default.sql", "data-test.sql")
                 .build();
     }
 }

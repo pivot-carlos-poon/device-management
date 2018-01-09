@@ -1,15 +1,20 @@
-package com.sample.beach.deviceManagement;
+package com.sample.beach.deviceManagement.entity;
 
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
+import javax.persistence.*;
 
+
+@Entity
+@NamedQuery(name="find_all_devices", query="select d from Device d")
 public class Device {
 
-    Integer id;
-    String name;
-    String email;
-    String type;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+    private String email;
+    private String type;
 
     public String getName() {
         return name;
@@ -38,6 +43,13 @@ public class Device {
     public Device(Integer id, String name, String email, String type) {
         super();
         this.id = id;
+        this.name = name;
+        this.email = email;
+        this.type = type;
+    }
+
+    public Device(String name, String email, String type) {
+        super();
         this.name = name;
         this.email = email;
         this.type = type;

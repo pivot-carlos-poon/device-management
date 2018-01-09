@@ -27,25 +27,7 @@ public class DeviceManagementApplication implements CommandLineRunner {
 		context.getEnvironment().setActiveProfiles("default");
 	}
 
-	@Autowired
-	JdbcTemplate jdbcTemplate;
-
 	@Override
 	public void run(String... strings) throws Exception {
-
-//		List<Device> devices = jdbcTemplate.query("select id from devices", new ResultSetExtractor<List<Device>>() {
-//			@Nullable
-//			@Override
-//			public List<Device> extractData(ResultSet rs) throws SQLException, DataAccessException {
-//				List<Device> s = new ArrayList<>();
-//				while (rs.next()) {
-//					Device d = new Device();
-//					d.setId(rs.getInt(1));
-//					s.add(d);
-//				}
-//				return s;
-//			}
-//		});
-//		System.out.print(devices);
 	}
 }

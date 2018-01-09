@@ -1,1 +1,0 @@
-insert into devices(name, email, type) values('john smith', 'john@john.com', 'aPhone');

@@ -1,5 +1,9 @@
 package com.sample.beach.deviceManagement;
 
+import com.sample.beach.deviceManagement.controller.DeviceController;
+import com.sample.beach.deviceManagement.entity.Device;
+import com.sample.beach.deviceManagement.repository.DeviceRepository;
+import com.sample.beach.deviceManagement.requestbody.DeviceRequestBody;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +36,7 @@ public class DeviceControllerTest {
 
     @Before
     public void initializeTests() {
-        testDevice = new Device(123, "some phone name",
+        testDevice = new Device( 123,"some phone name",
                 "some@example.com", "APhone");
 
         testRequestBody = new DeviceRequestBody();
@@ -62,12 +66,12 @@ public class DeviceControllerTest {
     public void testShouldUpdateExistingDeviceAllFields() {
         when(deviceRepository.updateDevice(123, "some phone name",
                 "some@example.com", "APhone")).thenReturn(testDevice);
-        testRequestBody.setName(testDevice.name);
-        testRequestBody.setEmail(testDevice.email);
-        testRequestBody.setType(testDevice.type);
-        ResponseEntity<Device> responseEntity = deviceController.updateDevice(testDevice.id, testRequestBody);
+        testRequestBody.setName(testDevice.getName());
+        testRequestBody.setEmail(testDevice.getEmail());
+        testRequestBody.setType(testDevice.getType());
+        ResponseEntity<Device> responseEntity = deviceController.updateDevice(testDevice.getId(), testRequestBody);
         verify(deviceRepository, times(1))
-                .updateDevice(testDevice.id, testDevice.name, testDevice.email, testDevice.type);
+                .updateDevice(testDevice.getId(), testDevice.getName(), testDevice.getEmail(), testDevice.getType());
 
         assertEquals(responseEntity, ResponseEntity.ok(testDevice));
     }
@@ -75,19 +79,19 @@ public class DeviceControllerTest {
     @Test
     public void testShouldUpdateExistingDeviceOneField() {
         when(deviceRepository.updateDevice(anyInt(), anyString(), isNull(), isNull())).thenReturn(testDevice);
-        testRequestBody.setName(testDevice.name);
-        ResponseEntity<Device> response = deviceController.updateDevice(testDevice.id, testRequestBody);
+        testRequestBody.setName(testDevice.getName());
+        ResponseEntity<Device> response = deviceController.updateDevice(testDevice.getId(), testRequestBody);
         verify(deviceRepository, times(1))
-                .updateDevice(testDevice.id, testDevice.name, null, null);
+                .updateDevice(testDevice.getId(), testDevice.getName(), null, null);
         assertEquals(response, ResponseEntity.ok(testDevice));
     }
 
     @Test
     public void testShouldNotUpdateDeviceThatDoesNotExist() {
         when(deviceRepository.updateDevice(anyInt(), anyString(), anyString(), anyString())).thenReturn(null);
-        testRequestBody.setName(testDevice.name);
-        testRequestBody.setEmail(testDevice.email);
-        testRequestBody.setType(testDevice.type);
+        testRequestBody.setName(testDevice.getName());
+        testRequestBody.setEmail(testDevice.getEmail());
+        testRequestBody.setType(testDevice.getType());
 
         ResponseEntity<Device> response = deviceController.updateDevice(123, testRequestBody);
         verify(deviceRepository, times(1)).updateDevice(anyInt(), anyString(), anyString(), anyString());

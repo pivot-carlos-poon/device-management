@@ -1,20 +1,20 @@
 package com.sample.beach.deviceManagement;
 
-import org.junit.After;
+import com.sample.beach.deviceManagement.configuration.DeviceConfiguration;
+import com.sample.beach.deviceManagement.entity.Device;
+import com.sample.beach.deviceManagement.repository.DeviceRepoInterface;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.sql.DataSource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -22,52 +22,63 @@ import static org.junit.Assert.*;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {DeviceManagementApplication.class, DeviceConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@SpringBootTest
 public class DeviceRepositoryTest {
 
     @Autowired
-    DeviceRepository deviceRepository;
-
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    @Qualifier("h2Repo")
+//    @Qualifier("jpaRepo")
+    DeviceRepoInterface deviceRepository;
 
     @Before
     public void setUp() throws Exception {
-
+        deviceRepository.addDevice("fakeDevice1", "fakeEmail1", "fakeType1");
+        deviceRepository.addDevice("fakeDevice2", "fakeEmail2", "fakeType2");
     }
 
     @Test
     public void testShouldShowDisplayListOfDevices() {
-        List<Device> devices = deviceRepository.getDevices();
-        assertEquals(4, devices.size());
-        Device firstDevice = devices.get(0);
-        assertEquals("paul smith", firstDevice.getName());
-        assertEquals("paul@paul.com", firstDevice.getEmail());
-        assertEquals("aPhone", firstDevice.getType());
 
-        Device lastDevice = devices.get(3);
-        assertEquals("smith smith", lastDevice.getName());
-        assertEquals("smith@smith.com", lastDevice.getEmail());
-        assertEquals("00000000 Berry", lastDevice.getType());
+        List<Device> devices = deviceRepository.getDevices();
+        assertEquals(2, devices.size());
+        Device firstDevice = devices.get(0);
+        assertEquals("fakeDevice1", firstDevice.getName());
+        assertEquals("fakeEmail1", firstDevice.getEmail());
+        assertEquals("fakeType1", firstDevice.getType());
+
+        Device lastDevice = devices.get(1);
+        assertEquals("fakeDevice2", lastDevice.getName());
+        assertEquals("fakeEmail2", lastDevice.getEmail());
+        assertEquals("fakeType2", lastDevice.getType());
+    }
+
+    @Test
+    public void testShouldSearchForSpecificDeviceByID() {
+        Device firstDevice = deviceRepository.getDeviceForId(1);
+        assertEquals("fakeDevice1", firstDevice.getName());
+        assertEquals("fakeEmail1", firstDevice.getEmail());
+        assertEquals("fakeType1", firstDevice.getType());
     }
 
     @Test
     public void testShouldAddDeviceToDB() {
+        assertEquals(2, deviceRepository.getDevices().size());
+
         Device addedDevice = deviceRepository.addDevice("Phone 5", "new@email.com", "Paperweight");
         assertNotNull(addedDevice);
         assertEquals("Phone 5", addedDevice.getName());
         assertEquals("new@email.com", addedDevice.getEmail());
         assertEquals("Paperweight", addedDevice.getType());
 
-        List storedDevices = jdbcTemplate.query("select * from devices where name='Phone 5' AND email='new@email.com' AND type='Paperweight'", new BeanPropertyRowMapper<>(Device.class));
-        assertEquals(1, storedDevices.size());
+        List storedDevices = deviceRepository.getDevices();
+        assertEquals(3, storedDevices.size());
     }
 
     @Test
     public void testShouldRemoveDevice() {
+        assertNotNull(deviceRepository.getDeviceForId(1));
         deviceRepository.removeDevice(1);
-        List <Device>storedDevices = jdbcTemplate.query("select * from devices", new BeanPropertyRowMapper<>(Device.class));
-        List resultList = storedDevices.stream().filter(device -> device.getId() == 1).collect(Collectors.toList());
-        assertEquals(0, resultList.size());
+        assertNull(deviceRepository.getDeviceForId(1));
     }
 
 }
