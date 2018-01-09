@@ -1,0 +1,9 @@
+---
+applications:
+- name: DeviceManagementApplication
+  memory: 1024M
+  instances: 1
+  path: build/libs/deviceManagement-0.0.1-SNAPSHOT.jar
+#  env:
+#    SPRING_PROFILES_ACTIVE: default
+#    DB_PASSWORD: ((DB_PASSWORD))

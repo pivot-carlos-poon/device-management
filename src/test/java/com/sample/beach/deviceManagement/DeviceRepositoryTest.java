@@ -19,14 +19,14 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 @ContextConfiguration(classes = {DeviceManagementApplication.class, DeviceConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 public class DeviceRepositoryTest {
 
     @Autowired
-    @Qualifier("h2Repo")
+    @Qualifier("jdbcRepo")
 //    @Qualifier("jpaRepo")
     DeviceRepoInterface deviceRepository;
 

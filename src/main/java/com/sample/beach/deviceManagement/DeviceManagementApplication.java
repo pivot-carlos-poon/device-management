@@ -24,7 +24,6 @@ public class DeviceManagementApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 
 		ConfigurableApplicationContext context = SpringApplication.run(DeviceManagementApplication.class, args);
-		context.getEnvironment().setActiveProfiles("default");
 	}
 
 	@Override

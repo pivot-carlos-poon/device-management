@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
-@Qualifier("h2Repo")
+@Qualifier("jdbcRepo")
 public class DeviceRepository implements DeviceRepoInterface {
 
     @Autowired
@@ -19,8 +19,6 @@ public class DeviceRepository implements DeviceRepoInterface {
 
     @Autowired
     DataSource dataSource;
-
-
 
     public List<Device> getDevices() {
         return jdbcTemplate.query("select * from device", new BeanPropertyRowMapper(Device.class));

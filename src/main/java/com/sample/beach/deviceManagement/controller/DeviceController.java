@@ -65,7 +65,7 @@ public class DeviceController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path="/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Device> getDeviceById(@PathVariable("id") Integer id) {
         Device device = deviceRepoInterface.getDeviceForId(id);
         if (device != null) {

@@ -15,11 +15,10 @@ import javax.sql.DataSource;
 public class DeviceConfiguration {
 
     @Bean(name = "deviceDataSource")
-    @Profile("default")
+    @Profile("local")
     public DataSource dataSource() {
         MysqlDataSource dataSource = new MysqlDataSource();
 
-        // Set dataSource Properties
         dataSource.setServerName("localhost");
         dataSource.setPortNumber(3306);
         dataSource.setDatabaseName("deviceManagement");
@@ -29,8 +28,10 @@ public class DeviceConfiguration {
     }
 
     @Bean(name = "deviceDataSource")
-    @Profile("test")
-    public DataSource testDataSource() {
+    @Profile(
+            value={"cloud", "h2"}
+    )
+    public DataSource defaultDataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.H2)
