@@ -4,12 +4,40 @@ resources:
       source: 
         uri: https://github.com/pivot-carlos-poon/device-management.git
         branch: master
+    - name: pws-labs-playground
+      type: cf
+      source:
+        api: https://api.run.pivotal.io
+        username: ((pws_email))
+        password: ((pws_password))
+        organization: ((pws_org))
+        space: ((pws_space))
+        skip_cert_check: true
 
 jobs: 
+  - name: build
+    plan:
+      - get: spring-bootcamp-repo
+        trigger: true
+      - task: unit-build
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: openjdk, tag: "8-jdk"}
+          inputs:
+            - name: spring-bootcamp-repo
+          run:
+            path: bash
+            args: 
+              - "-c"
+              - "pushd spring-bootcamp-repo && ./gradlew build && popd"
+
   - name: controller-test
     plan:
-      - get:  spring-bootcamp-repo
+      - get: spring-bootcamp-repo
         trigger: true
+        passed: [build]
       - task: unit-test
         config:
           platform: linux
@@ -24,4 +52,27 @@ jobs:
               - "-c"
               - "pushd spring-bootcamp-repo && ./gradlew test && popd"
         # file: spring-bootcamp-repo/ci/device-controller-test.yml
-
+  - name: deploy
+    plan:
+        - get: spring-bootcamp-repo
+          passed: [controller-test]
+          trigger: true
+        - task: unit-deploy
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source: {repository: openjdk, tag: "8-jdk"}
+            inputs:
+              - name: spring-bootcamp-repo
+            outputs:
+              - name: build-output
+                path: outputs
+            run:
+              path: bash
+              args: 
+                - "-c"
+                - "pushd spring-bootcamp-repo && ./gradlew build && cp build/libs/*.jar ../outputs && popd"
+        - put: pws-labs-playground
+          params:
+            manifest: ./spring-bootcamp-repo/manifest.yml
