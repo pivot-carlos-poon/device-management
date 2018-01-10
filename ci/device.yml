@@ -1,0 +1,27 @@
+resources:
+    - name: spring-bootcamp-repo
+      type: git
+      source: 
+        uri: https://github.com/pivot-carlos-poon/device-management.git
+        branch: master
+
+jobs: 
+  - name: controller-test
+    plan:
+      - get:  spring-bootcamp-repo
+        trigger: true
+      - task: unit-test
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: openjdk, tag: "8-jdk"}
+          inputs:
+            - name: spring-bootcamp-repo
+          run:
+            path: bash
+            args: 
+              - "-c"
+              - "pushd spring-bootcamp-repo && ./gradlew test && popd"
+        # file: spring-bootcamp-repo/ci/device-controller-test.yml
+
