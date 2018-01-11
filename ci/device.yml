@@ -1,5 +1,5 @@
 resources:
-    - name: spring-bootcamp-repo
+    - name: ((spring_bootcamp_repo))
       type: git
       source: 
         uri: https://github.com/pivot-carlos-poon/device-management.git
@@ -17,39 +17,31 @@ resources:
 jobs: 
   - name: build
     plan:
-      - get: spring-bootcamp-repo
+      - get: ((spring_bootcamp_repo))
         trigger: true
       - task: unit-build
-        file: spring-bootcamp-repo/ci/build/device-controller-build.yml 
+        file: ((spring_bootcamp_repo))/ci/unit-build/device-controller-build.yml 
         params: 
-          INPUT_RESOURCE: spring-bootcamp-repo
+          INPUT_RESOURCE: ((spring_bootcamp_repo))
 
   - name: controller-test
     plan:
-      - get: spring-bootcamp-repo
+      - get: ((spring_bootcamp_repo))
         trigger: true
       - task: unit-test
-        file: spring-bootcamp-repo/ci/test/device-controller-test.yml
+        file: ((spring_bootcamp_repo))/ci/test/device-controller-test.yml
+        params: 
+          INPUT_RESOURCE: ((spring_bootcamp_repo))
+
   - name: deploy
     plan:
-        - get: spring-bootcamp-repo
+        - get: ((spring_bootcamp_repo))
           passed: [build, controller-test]
           trigger: true
         - task: unit-deploy
-          config:
-            platform: linux
-            image_resource:
-              type: docker-image
-              source: {repository: openjdk, tag: "8-jdk"}
-            inputs:
-            - name: spring-bootcamp-repo
-            outputs:
-            - name: device-package
-            run:
-              path: bash
-              args: 
-                - "-c"
-                - "pushd spring-bootcamp-repo && ./gradlew build && cp build/libs/deviceManagement*.jar ../device-package/  && popd"
+          file: ((spring_bootcamp_repo))/ci/test/device-controller-test.yml
+          params: 
+            INPUT_RESOURCE: ((spring_bootcamp_repo))          
         - put: pws-labs-playground
           params:
-            manifest: ./spring-bootcamp-repo/ci/manifest.yml
+            manifest: ./((spring_bootcamp_repo))/ci/manifest.yml

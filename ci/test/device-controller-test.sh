@@ -1,6 +1,4 @@
 #!/bin/sh
 
-
-pwd
-cd spring-bootcamp-repo
+cd $INPUT_RESOURCE
 ./gradlew test

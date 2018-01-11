@@ -3,6 +3,6 @@ image_resource:
   type: docker-image
   source: {repository: openjdk, tag: "8-jdk"}
 inputs: 
-  - name: spring-bootcamp-repo
+  - name: ((spring_bootcamp_repo))
 run:
-  path: spring-bootcamp-repo/ci/test/device-controller-test.sh
+  path: ((spring_bootcamp_repo))/ci/test/device-controller-test.sh
