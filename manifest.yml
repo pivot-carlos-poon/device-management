@@ -3,7 +3,7 @@ applications:
 - name: DeviceManagementApplication-BSCP
   memory: 1024M
   instances: 1
-  path: device-package/deviceManagement-0.0.1-SNAPSHOT.jar
+  path: ../device-package/deviceManagement-0.0.1-SNAPSHOT.jar
 #  env:
 #    SPRING_PROFILES_ACTIVE: default
 #    DB_PASSWORD: ((DB_PASSWORD))
