@@ -20,7 +20,15 @@ jobs:
       - get: ((spring_bootcamp_repo))
         trigger: true
       - task: unit-build
-        file: ((spring_bootcamp_repo))/ci/unit-build/device-controller-build.yml 
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: openjdk, tag: "8-jdk"}
+          inputs: 
+            - name: ((spring_bootcamp_repo))
+          run:
+            path: ((spring_bootcamp_repo))/ci/unit-build/device-controller-build.sh
         params: 
           INPUT_RESOURCE: ((spring_bootcamp_repo))
 
@@ -29,7 +37,16 @@ jobs:
       - get: ((spring_bootcamp_repo))
         trigger: true
       - task: unit-test
-        file: ((spring_bootcamp_repo))/ci/test/device-controller-test.yml
+        # file: ((spring_bootcamp_repo))/ci/test/device-controller-test.yml
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: openjdk, tag: "8-jdk"}
+          inputs: 
+            - name: ((spring_bootcamp_repo))
+          run:
+            path: ((spring_bootcamp_repo))/ci/test/device-controller-test.sh
         params: 
           INPUT_RESOURCE: ((spring_bootcamp_repo))
 
@@ -39,7 +56,17 @@ jobs:
           passed: [build, controller-test]
           trigger: true
         - task: unit-deploy
-          file: ((spring_bootcamp_repo))/ci/test/device-controller-test.yml
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source: {repository: openjdk, tag: "8-jdk"}
+            inputs: 
+              - name: ((spring_bootcamp_repo))
+            outputs:
+              - name: device-package
+            run:
+              path: ((spring_bootcamp_repo))/ci/deploy/device-controller-deploy.sh
           params: 
             INPUT_RESOURCE: ((spring_bootcamp_repo))          
         - put: pws-labs-playground
