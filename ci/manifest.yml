@@ -3,4 +3,4 @@ applications:
 - name: DeviceManagementApplication-BSCP
   memory: 1024M
   instances: 1
-  path: build/libs/deviceManagement-0.0.1-SNAPSHOT.jar
+  path: ../device-package/deviceManagement-0.0.1-SNAPSHOT.jar

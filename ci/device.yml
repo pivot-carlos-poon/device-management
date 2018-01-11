@@ -13,6 +13,11 @@ resources:
         organization: ((pws_org))
         space: ((pws_space))
         skip_cert_check: true
+    # - name: device-package
+    #   type: archive
+    #   source:
+    #       uri: outputs
+
 
 jobs: 
   - name: build
@@ -37,7 +42,6 @@ jobs:
     plan:
       - get: spring-bootcamp-repo
         trigger: true
-        passed: [build]
       - task: unit-test
         config:
           platform: linux
@@ -55,7 +59,7 @@ jobs:
   - name: deploy
     plan:
         - get: spring-bootcamp-repo
-          passed: [controller-test]
+          passed: [build, controller-test]
           trigger: true
         - task: unit-deploy
           config:
@@ -64,15 +68,14 @@ jobs:
               type: docker-image
               source: {repository: openjdk, tag: "8-jdk"}
             inputs:
-              - name: spring-bootcamp-repo
+            - name: spring-bootcamp-repo
             outputs:
-              - name: build-output
-                path: outputs
+            - name: device-package
             run:
               path: bash
               args: 
                 - "-c"
-                - "pushd spring-bootcamp-repo && ./gradlew build && cp build/libs/*.jar ../outputs && popd"
+                - "pushd spring-bootcamp-repo && ./gradlew build && cp build/libs/deviceManagement*.jar ../device-package/  && popd"
         - put: pws-labs-playground
           params:
-            manifest: ./spring-bootcamp-repo/manifest.yml
+            manifest: ./spring-bootcamp-repo/concourse/manifest.yml
