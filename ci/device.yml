@@ -78,4 +78,4 @@ jobs:
                 - "pushd spring-bootcamp-repo && ./gradlew build && cp build/libs/deviceManagement*.jar ../device-package/  && popd"
         - put: pws-labs-playground
           params:
-            manifest: ./spring-bootcamp-repo/concourse/manifest.yml
+            manifest: ./spring-bootcamp-repo/ci/manifest.yml
