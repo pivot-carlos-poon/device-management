@@ -12,7 +12,6 @@ buildscript {
 	}
 }
 
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -42,4 +41,5 @@ dependencies {
 	compile 'mysql:mysql-connector-java'
 	compile("com.h2database:h2")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile("org.springframework.boot:spring-boot-configuration-processor")
 }

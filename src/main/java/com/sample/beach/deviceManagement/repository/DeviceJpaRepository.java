@@ -17,9 +17,6 @@ import java.util.List;
 @Qualifier("jpaRepo")
 public class DeviceJpaRepository implements DeviceRepoInterface {
 
-    @Autowired
-    DataSource dataSource;
-
     @PersistenceContext
     private EntityManager entityManager;
 

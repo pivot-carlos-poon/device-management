@@ -17,9 +17,6 @@ public class DeviceRepository implements DeviceRepoInterface {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    DataSource dataSource;
-
     public List<Device> getDevices() {
         return jdbcTemplate.query("select * from device", new BeanPropertyRowMapper(Device.class));
     }
